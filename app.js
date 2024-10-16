@@ -11,8 +11,9 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
-const listings = require("./routes/listing.js");
-const reviews = require("./routes/review.js");
+const listingRouter = require("./routes/listing.js");
+const reviewRouter = require("./routes/review.js");
+const userRouter = require("./routes/user.js")
 const { register } = require("module");
 
 
@@ -69,7 +70,7 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash());
 
-app.use(passport.initialize);
+app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 
@@ -84,19 +85,22 @@ app.use((req, res , next) =>{
     next();
 })
 
-app.get("/demouser", async (req,res) =>{
-    let fakeUser = new User({
-        email : "Student@gmail.com",
-        username : "Delta Student",
-    });
-    let registeredUser= await User.register(fakeUser, "Hello World!")
-    res.send(registeredUser)
-})
+// app.get("/demouser", async (req,res) =>{
+//     let fakeUser = new User({
+//         email : "Student@gmail.com",
+//         username : "Delta Student",
+//     });
+//     let registeredUser= await User.register(fakeUser, "Hello World!")
+//     res.send(registeredUser)
+// })
 //listings
-app.use("/listings",listings);
+app.use("/listings",listingRouter);
 
 //Reviews
-app.use("/listings/:id/reviews", reviews);
+app.use("/listings/:id/reviews", reviewRouter);
+
+//User
+app.use("/",userRouter);
 
 
 
