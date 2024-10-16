@@ -31,11 +31,24 @@ router.get("/login", (req,res)=>{
     res.render("users/login.ejs");
 });
 
+
 router.post("/login", passport.authenticate("local" , {failureRedirect : "/login", failureFlash : true}) ,async(req ,res)=>{
-    console.log("welcome");
+    //console.log("welcome");
    req.flash("success" , "Welcome to Wanderlust! You are Succesfully Logged in");
    res.redirect("/listings")
 });
 
+
+//Logout User
+ 
+router.get("/logout" , (req, res) =>{
+    req.logout((err)=> {
+        if(err){
+            return next(err);
+        }
+        req.flash("success" , "User Logged Out!");
+        res.redirect("/listings");
+    })
+})
 
 module.exports =router;

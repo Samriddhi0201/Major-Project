@@ -4,6 +4,7 @@ const Listing = require("../models/listing.js");
 const wrapAsync =require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const { listingSchema} = require("../schema.js");
+const {isLoggedIn} =require("../middleware.js")
 
 const validateListing =(req, res , next)=>{
     let {error } = listingSchema.validate(req.body);
@@ -29,7 +30,9 @@ router.get("/" , wrapAsync(async (req , res) =>{
  
  //New Route
  
- router.get("/new" , wrapAsync(async(req, res) =>{
+ router.get("/new" ,isLoggedIn , wrapAsync(async(req, res) =>{
+    //console.log(req.user);
+   
      res.render("listings/new.ejs");
  }));
  
@@ -46,7 +49,7 @@ router.get("/" , wrapAsync(async (req , res) =>{
  }));
  
  //Create Route
- router.post("/" , validateListing,  wrapAsync(async(req, res, next) =>{
+ router.post("/" , isLoggedIn , validateListing,  wrapAsync(async(req, res, next) =>{
     // let { title, description , image , price, country , location } = req.body;
     // let listing = req.body.listing;
     
@@ -56,9 +59,10 @@ router.get("/" , wrapAsync(async (req , res) =>{
     req.flash("success", "New Listing Created!");
      res.redirect("/listings");
  }));
+
  //Edit Route
  
- router.get("/:id/edit" ,wrapAsync(async  (req, res) =>{
+ router.get("/:id/edit", isLoggedIn ,wrapAsync(async  (req, res) =>{
     let { id } =req.params;
     const listing = await Listing.findById(id);
     req.flash("success", "Listing Edited Successfully!");
@@ -70,7 +74,7 @@ router.get("/" , wrapAsync(async (req , res) =>{
 }));
 
 //Update Route
-router.put("/:id", wrapAsync(async  (req, res) =>{
+router.put("/:id",isLoggedIn ,validateListing, wrapAsync(async  (req, res) =>{
     let { id } =req.params;
     // if(!req.body.listing){
     //     throw new ExpressError(400 ,"Send Valid Data For Listings" )
@@ -81,7 +85,7 @@ router.put("/:id", wrapAsync(async  (req, res) =>{
 }));
 
 //Delete Route
-router.delete("/:id", wrapAsync(async(req, res) =>{
+router.delete("/:id", isLoggedIn , wrapAsync(async(req, res) =>{
     let { id } =req.params;
    let deletedListing = await Listing.findByIdAndDelete(id);
    console.log(deletedListing);
