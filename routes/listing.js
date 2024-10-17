@@ -40,11 +40,12 @@ router.get("/" , wrapAsync(async (req , res) =>{
  
  router.get("/:id" , wrapAsync(async(req, res) =>{
      let { id } = req.params;
-     const listing = await Listing.findById(id).populate("reviews");
+     const listing = await Listing.findById(id).populate("reviews").populate("owner");
      if(!listing){
         req.flash("error", "Requested Listing does not exists!");
         res.redirect("/listings");
      }
+     console.log(listing);
      res.render("listings/show.ejs", {listing});
  }));
  
@@ -54,6 +55,7 @@ router.get("/" , wrapAsync(async (req , res) =>{
     // let listing = req.body.listing;
     
      const newListing = new Listing(req.body.listing);
+     newListing.owner = req.user._id;
      await newListing.save();
     // console.log(listing);
     req.flash("success", "New Listing Created!");
@@ -79,6 +81,11 @@ router.put("/:id",isLoggedIn ,validateListing, wrapAsync(async  (req, res) =>{
     // if(!req.body.listing){
     //     throw new ExpressError(400 ,"Send Valid Data For Listings" )
     // }
+    let listing = await Listing.findById(id);
+    if(!currUser && listing.owner._id.equals(res.locals.currUser._id)){
+        req.flash("error", "You don't have permission to edit");
+        return res.redirect(`/listings/${id}`);
+    }
    await Listing.findByIdAndUpdate(id ,{...req.body.listing});
    req.flash("success", "Listing Updated Successfully!");
     res.redirect(`/listings/${id}`);
