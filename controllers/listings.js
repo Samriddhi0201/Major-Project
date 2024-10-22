@@ -32,7 +32,11 @@ module.exports.createListing = async(req, res, next) =>{
     // let listing = req.body.listing;
     
      const newListing = new Listing(req.body.listing);
+     let url  = req.file.path;
+     let filename = req.file.filename;
+     console.log(url , "..." , filename)
      newListing.owner = req.user._id;
+    newListing.image = { url , filename}
      await newListing.save();
     // console.log(listing);
     req.flash("success", "New Listing Created!");
@@ -52,13 +56,23 @@ module.exports.createListing = async(req, res, next) =>{
 
 module.exports.updateListing =async (req, res) => {
     let { id } = req.params;
-    const listing = await Listing.findById(id);
+    //const listing = await Listing.findById(id);
 
     // if (!listing.owner.equals(req.user._id)) {
     //     req.flash("error", "You don't have permission to update this listing.");
     //     return res.redirect(`/listings/${id}`);
     // }
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+
+    if(typeof req.file !== "undefined"){
+        let url  = req.file.path;
+        let filename = req.file.filename;
+       //console.log(url , "..." , filename)
+        listing.image = { url , filename} ;
+        await listing.save();
+
+    }
+    
     req.flash("success", "Listing Updated Successfully!");
     res.redirect(`/listings/${id}`);
 } ;
