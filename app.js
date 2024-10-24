@@ -25,9 +25,11 @@ const userRouter = require("./routes/user.js")
 const { register } = require("module");
 
 
-const MONGO_URL = 'mongodb://127.0.0.1:27017/wanderlust';
+//const MONGO_URL = 'mongodb://127.0.0.1:27017/wanderlust';
+
+const dbUrl = process.env.ATLASDB_URL
 async function main(){
-  await mongoose.connect(MONGO_URL)
+  await mongoose.connect(dbUrl)
   
 }
 
@@ -39,9 +41,9 @@ main().then(() =>{
 })
 
 
-app.get("/", (req, res) =>{
-   res.send("HI, I am Root")
-})
+// app.get("/", (req, res) =>{
+//    res.send("HI, I am Root")
+// })
 
 // app.get("/testListing", async (req, res) =>{
 //     let sampleListing = new Listing({
