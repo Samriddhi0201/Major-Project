@@ -1,6 +1,6 @@
 const User = require("../models/user.js")
 
-module.exports.renderSignupForm = async(req ,res)=>{
+module.exports.renderSignupForm = async(req ,res, next)=>{
     try{
         let {username , email , password} = req.body;
         const newUser = new User({email, username});
@@ -21,14 +21,14 @@ module.exports.renderSignupForm = async(req ,res)=>{
 };
 
 
-module.exports.renderLoginForm = async(req ,res)=>{
+module.exports.renderLoginForm = async(req ,res,)=>{
     //console.log("welcome");
    req.flash("success" , "Welcome to Wanderlust! You are Succesfully Logged in");
    let redirectUrl = res.locals.redirectUrl || "/listings"; 
    res.redirect(redirectUrl);
 };
 
-module.exports.logout =  (req, res) =>{
+module.exports.logout =  (req, res, next) =>{
     req.logout((err)=> {
         if(err){
             return next(err);
