@@ -40,7 +40,8 @@ main().then(() =>{
 
 
 app.get("/", (req, res) =>{
-   res.send("/listings")
+   res.redirect
+       ("/listings")
 })
 
 // app.get("/testListing", async (req, res) =>{
