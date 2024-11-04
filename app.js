@@ -39,9 +39,9 @@ main().then(() =>{
 })
 
 
-// app.get("/", (req, res) =>{
-//    res.send("HI, I am Root")
-// })
+app.get("/", (req, res) =>{
+   res.send("/listings")
+})
 
 // app.get("/testListing", async (req, res) =>{
 //     let sampleListing = new Listing({
